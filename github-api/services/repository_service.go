@@ -1,14 +1,13 @@
 package services
 
 import (
-	"fmt"
 	"net/http"
 	"sync"
 
 	"github.com/rwehresmann/go-microservices/github-api/config"
 	"github.com/rwehresmann/go-microservices/github-api/domain/github"
 	"github.com/rwehresmann/go-microservices/github-api/domain/repositories"
-	"github.com/rwehresmann/go-microservices/github-api/log/logrus_logger"
+	"github.com/rwehresmann/go-microservices/github-api/log/zap_logger"
 	github_provider "github.com/rwehresmann/go-microservices/github-api/providers"
 	"github.com/rwehresmann/go-microservices/github-api/utils/errors"
 )
@@ -37,15 +36,27 @@ func (s *reposService) CreateRepo(clientId string, input repositories.CreateRepo
 		Private:     false,
 	}
 
-	logrus_logger.Info("About to send request to external API", fmt.Sprintf("client_id:%s", clientId), "status:peding")
+	zap_logger.Info(
+		"About to send request to external API",
+		zap_logger.Field("client_id", clientId),
+		zap_logger.Field("satus", "pending"),
+	)
 	response, err := github_provider.CreateRepo(config.GetGithubAccessToken(), request)
 	if err != nil {
-		logrus_logger.Error("Response from external API", err, fmt.Sprintf("client_id:%s", clientId), "status:error")
+		zap_logger.Error(
+			"Response from external API",
+			zap_logger.Field("client_id", clientId),
+			zap_logger.Field("satus", "error"),
+		)
 
 		return nil, errors.NewApiError(err.StatusCode, err.Message)
 	}
 
-	logrus_logger.Info("Response from external API", fmt.Sprintf("client_id:%s", clientId), "status:success")
+	zap_logger.Info(
+		"Response from external API",
+		zap_logger.Field("client_id", clientId),
+		zap_logger.Field("satus", "success"),
+	)
 	result := repositories.CreateRepoResponse{
 		Id:    response.Id,
 		Name:  response.Name,

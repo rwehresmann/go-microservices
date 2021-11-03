@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rwehresmann/go-microservices/github-api/log/logrus_logger"
+	"github.com/rwehresmann/go-microservices/github-api/log/zap_logger"
 )
 
 var router *gin.Engine
@@ -12,10 +12,10 @@ func init() {
 }
 
 func StartApp() {
-	logrus_logger.Info("Mapping urls", "step:1", "status:pending")
+	zap_logger.Info("Mapping urls", zap_logger.Field("step", "1"), zap_logger.Field("status", "pending"))
 	mapUrls()
 
-	logrus_logger.Info("Mapping urls", "step:2", "status:success")
+	zap_logger.Info("Mapping urls", zap_logger.Field("step", "2"), zap_logger.Field("status", "success"))
 
 	if err := router.Run(":8080"); err != nil {
 		panic(err)
